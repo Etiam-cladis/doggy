@@ -35,9 +35,9 @@ namespace doggy
                 }
 
                 template <typename F, typename... Args>
-                void enqueue(F f, Args... args)
+                void enqueue(F f, Args &&...args)
                 {
-                        auto task = std::bind(f, args...);
+                        auto task = std::bind(f, std::forward<Args>(args)...);
                         {
                                 std::lock_guard lk(mutex_);
                                 task_.push(std::move(task));
