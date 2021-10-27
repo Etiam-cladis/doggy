@@ -8,6 +8,8 @@ namespace doggy
         {
                 class EventLoop
                 {
+                public:
+                private:
                 };
 
         } // namespace base
