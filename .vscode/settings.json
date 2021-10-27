@@ -1,6 +1,7 @@
 {
         "files.associations": {
                 "cassert": "cpp",
-                "thread": "cpp"
+                "thread": "cpp",
+                "functional": "cpp"
         }
 }

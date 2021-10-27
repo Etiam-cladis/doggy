@@ -2,6 +2,7 @@
 
 #include "./header.h"
 
+#include "./threadPoll.hpp"
 namespace doggy
 {
         void init()
