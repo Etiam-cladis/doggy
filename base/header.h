@@ -13,6 +13,7 @@
 #include <queue>
 #include <atomic>
 #include <condition_variable>
+#include <memory>
 
 #include <netinet/in.h>
 #include <sys/socket.h>
