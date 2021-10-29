@@ -6,17 +6,17 @@
 
 namespace doggy
 {
-        namespace base
+        namespace net
         {
                 class EventLoop
                 {
                 public:
-                        void updateChannel(doggy::net::Channel *channel);
-                        void removeChannel(doggy::net::Channel *channel);
+                        void updateChannel(Channel *channel);
+                        void removeChannel(Channel *channel);
 
                 private:
                 };
 
-        } // namespace base
+        } // namespace net
 
 } // namespace doggy

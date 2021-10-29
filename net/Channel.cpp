@@ -3,7 +3,7 @@
 using namespace doggy;
 using namespace doggy::net;
 
-Channel::Channel(const std::shared_ptr<doggy::base::EventLoop> &loop, int fd)
+Channel::Channel(EventLoop *loop, int fd)
     : loop_{loop},
       fd_{fd},
       event_{kNoneEvent},
@@ -23,35 +23,45 @@ Channel::~Channel()
 void Channel::update()
 {
         addedToLoop_ = true;
-        if (auto spt = loop_.lock())
-        {
-                spt->updateChannel(this);
-        }
-        else
-        {
-                std::cerr << "loop expired" << std::endl;
-                abort();
-        }
+        loop_->updateChannel(this);
 }
 
 void Channel::remove()
 {
         assert(isNoneEvent());
         addedToLoop_ = false;
-        if (auto spt = loop_.lock())
-        {
-                spt->removeChannel(this);
-        }
-        else
-        {
-                std::cerr << "loop expired" << std::endl;
-                abort();
-        }
+        loop_->removeChannel(this);
 }
 
 void Channel::handleEvent()
 {
+#ifndef USE_LT_MODE
         eventHading_ = true;
-        // tomorrow
+
+        if (rEvent_ & EPOLLHUP && ~(rEvent_ & EPOLLIN))
+        {
+                if (closeCallback_)
+                        closeCallback_();
+        }
+
+        if (rEvent_ & (EPOLLIN | EPOLLPRI | EPOLLRDHUP))
+        {
+                if (readCallback_)
+                        readCallback_();
+        }
+
+        if (rEvent_ & EPOLLOUT)
+        {
+                if (writeCallback_)
+                        writeCallback_();
+        }
+
+        if (rEvent_ & EPOLLERR)
+        {
+                if (errorCallback_)
+                        errorCallback_();
+        }
+
         eventHading_ = false;
+#endif
 }

@@ -14,6 +14,7 @@
 #include <atomic>
 #include <condition_variable>
 #include <memory>
+#include <unordered_map>
 
 #include <netinet/in.h>
 #include <sys/socket.h>

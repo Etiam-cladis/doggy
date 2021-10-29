@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base/EventLoop.h"
+#include "./EventLoop.h"
 
 namespace doggy
 {
@@ -11,7 +11,7 @@ namespace doggy
                         using EventCallback = std::function<void()>;
 
                 public:
-                        Channel(const std::shared_ptr<doggy::base::EventLoop> &loop, int fd);
+                        Channel(EventLoop *loop, int fd);
                         ~Channel();
 
                 public:
@@ -19,12 +19,12 @@ namespace doggy
                         Channel &operator=(const Channel &) = delete;
 
                 public:
-                        int fd()
+                        int fd() const
                         {
                                 return fd_;
                         }
 
-                        int index()
+                        int index() const
                         {
                                 return index_;
                         }
@@ -34,7 +34,7 @@ namespace doggy
                                 index_ = inx;
                         }
 
-                        int events()
+                        int events() const
                         {
                                 return event_;
                         }
@@ -44,7 +44,7 @@ namespace doggy
                                 rEvent_ = rev;
                         }
 
-                        bool isNoneEvent()
+                        bool isNoneEvent() const
                         {
                                 return event_ == kNoneEvent;
                         }
@@ -73,6 +73,42 @@ namespace doggy
                                 update();
                         }
 
+                        void enableRdhup()
+                        {
+                                event_ |= kRdhupEvent_;
+                                update();
+                        }
+
+                        void disableRdhup()
+                        {
+                                event_ &= ~kRdhupEvent_;
+                                update();
+                        }
+
+                        void enableOneshot()
+                        {
+                                event_ |= kOneshotEvent_;
+                                update();
+                        }
+
+                        void disableOneshot()
+                        {
+                                event_ &= ~kOneshotEvent_;
+                                update();
+                        }
+
+                        void enableEt()
+                        {
+                                event_ |= kEtEvent_;
+                                update();
+                        }
+
+                        void disableEt()
+                        {
+                                event_ &= ~kEtEvent_;
+                                update();
+                        }
+
                         void disableAll()
                         {
                                 event_ = kNoneEvent;
@@ -87,6 +123,21 @@ namespace doggy
                         bool isWriting() const
                         {
                                 return event_ & kWriteEvent_;
+                        }
+
+                        bool isRdhup() const
+                        {
+                                return event_ & kRdhupEvent_;
+                        }
+
+                        bool isOneshot() const
+                        {
+                                return event_ & kOneshotEvent_;
+                        }
+
+                        bool isEt() const
+                        {
+                                return event_ & kEtEvent_;
                         }
 
                         void setReadCallback(const EventCallback &cb)
@@ -130,9 +181,12 @@ namespace doggy
                         }
 
                 public:
-                        void handleEvent();
-                        std::weak_ptr<doggy::base::EventLoop> ownerLoop() { return loop_; }
                         void remove();
+                        void handleEvent();
+                        EventLoop *ownerLoop() const
+                        {
+                                return loop_;
+                        }
 
                 private:
                         void update();
@@ -140,8 +194,11 @@ namespace doggy
                         static constexpr int kNoneEvent = 0;
                         static constexpr int kReadEvent_ = EPOLLIN | EPOLLPRI;
                         static constexpr int kWriteEvent_ = EPOLLOUT;
+                        static constexpr int kRdhupEvent_ = EPOLLRDHUP;
+                        static constexpr int kOneshotEvent_ = EPOLLONESHOT;
+                        static constexpr int kEtEvent_ = EPOLLET;
 
-                        std::weak_ptr<doggy::base::EventLoop> loop_;
+                        EventLoop *loop_;
                         int fd_;
                         int event_;
 
