@@ -1,5 +1,6 @@
 build/
 test/
 base/threadPoll.hpp
+base/String.h
 /R
 /TODOlist

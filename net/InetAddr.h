@@ -6,7 +6,7 @@ namespace doggy
 {
         namespace net
         {
-                class inetAddress
+                class InetAddress
                 {
                 public:
                 private:

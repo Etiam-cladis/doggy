@@ -19,35 +19,17 @@ namespace doggy
                         Channel &operator=(const Channel &) = delete;
 
                 public:
-                        int fd() const
-                        {
-                                return fd_;
-                        }
+                        int fd() const { return fd_; }
 
-                        int index() const
-                        {
-                                return index_;
-                        }
+                        int index() const { return index_; }
 
-                        void setIndex(int inx)
-                        {
-                                index_ = inx;
-                        }
+                        void setIndex(int inx) { index_ = inx; }
 
-                        int events() const
-                        {
-                                return event_;
-                        }
+                        int events() const { return event_; }
 
-                        void setRevents(int rev)
-                        {
-                                rEvent_ = rev;
-                        }
+                        void setRevents(int rev) { rEvent_ = rev; }
 
-                        bool isNoneEvent() const
-                        {
-                                return event_ == kNoneEvent;
-                        }
+                        bool isNoneEvent() const { return event_ == kNoneEvent; }
 
                         void enableRead()
                         {
@@ -115,78 +97,36 @@ namespace doggy
                                 update();
                         }
 
-                        bool isReading() const
-                        {
-                                return event_ & kReadEvent_;
-                        }
+                        bool isReading() const { return event_ & kReadEvent_; }
 
-                        bool isWriting() const
-                        {
-                                return event_ & kWriteEvent_;
-                        }
+                        bool isWriting() const { return event_ & kWriteEvent_; }
 
-                        bool isRdhup() const
-                        {
-                                return event_ & kRdhupEvent_;
-                        }
+                        bool isRdhup() const { return event_ & kRdhupEvent_; }
 
-                        bool isOneshot() const
-                        {
-                                return event_ & kOneshotEvent_;
-                        }
+                        bool isOneshot() const { return event_ & kOneshotEvent_; }
 
-                        bool isEt() const
-                        {
-                                return event_ & kEtEvent_;
-                        }
+                        bool isEt() const { return event_ & kEtEvent_; }
 
-                        void setReadCallback(const EventCallback &cb)
-                        {
-                                readCallback_ = cb;
-                        }
+                        void setReadCallback(const EventCallback &cb) { readCallback_ = cb; }
 
-                        void setReadCallback(EventCallback &&cb)
-                        {
-                                readCallback_ = std::move(cb);
-                        }
+                        void setReadCallback(EventCallback &&cb) { readCallback_ = std::move(cb); }
 
-                        void setWriteCallback(const EventCallback &cb)
-                        {
-                                writeCallback_ = cb;
-                        }
+                        void setWriteCallback(const EventCallback &cb) { writeCallback_ = cb; }
 
-                        void setWriteCallback(EventCallback &&cb)
-                        {
-                                writeCallback_ = std::move(cb);
-                        }
+                        void setWriteCallback(EventCallback &&cb) { writeCallback_ = std::move(cb); }
 
-                        void setCloseCallback(const EventCallback &cb)
-                        {
-                                closeCallback_ = cb;
-                        }
+                        void setCloseCallback(const EventCallback &cb) { closeCallback_ = cb; }
 
-                        void setCloseCallback(EventCallback &&cb)
-                        {
-                                closeCallback_ = std::move(cb);
-                        }
+                        void setCloseCallback(EventCallback &&cb) { closeCallback_ = std::move(cb); }
 
-                        void setErrorCallback(const EventCallback &cb)
-                        {
-                                errorCallback_ = cb;
-                        }
+                        void setErrorCallback(const EventCallback &cb) { errorCallback_ = cb; }
 
-                        void setErrorCallback(EventCallback &&cb)
-                        {
-                                errorCallback_ = std::move(cb);
-                        }
+                        void setErrorCallback(EventCallback &&cb) { errorCallback_ = std::move(cb); }
 
                 public:
                         void remove();
                         void handleEvent();
-                        EventLoop *ownerLoop() const
-                        {
-                                return loop_;
-                        }
+                        EventLoop *ownerLoop() const { return loop_; }
 
                 private:
                         void update();

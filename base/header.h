@@ -23,3 +23,5 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/epoll.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>

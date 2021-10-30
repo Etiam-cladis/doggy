@@ -15,7 +15,7 @@ namespace doggy
                         using ChannelMap = std::unordered_map<int, Channel *>;
 
                 public:
-                        Epoll(const std::weak_ptr<EventLoop> &loop);
+                        Epoll(const std::unique_ptr<EventLoop> &loop);
                         ~Epoll();
 
                 public:
@@ -24,13 +24,15 @@ namespace doggy
 
                 public:
                         void poll(int timesOutMs, ChannelList &channelList);
-                        bool fdHasChannel(Channel *channel) const;
+                        void updateChannel(Channel *channel);
+                        void removeChannel(Channel *channel);
 
                 private:
+                        void fillActiveChannels(int numEvents, ChannelList *activeChannels) const;
                         void update(int operation, Channel *channel);
 
                 private:
-                        std::weak_ptr<EventLoop> loop_;
+                        std::unique_ptr<EventLoop> &loop_;
                         int epollFd_;
                         EventList eventList_;
                         ChannelMap channels_;
