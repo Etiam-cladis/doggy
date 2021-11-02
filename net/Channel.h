@@ -57,37 +57,37 @@ namespace doggy
 
                         void enableRdhup()
                         {
-                                event_ |= kRdhupEvent_;
+                                event_ |= kRdhup_;
                                 update();
                         }
 
                         void disableRdhup()
                         {
-                                event_ &= ~kRdhupEvent_;
+                                event_ &= ~kRdhup_;
                                 update();
                         }
 
                         void enableOneshot()
                         {
-                                event_ |= kOneshotEvent_;
+                                event_ |= kOneshot_;
                                 update();
                         }
 
                         void disableOneshot()
                         {
-                                event_ &= ~kOneshotEvent_;
+                                event_ &= ~kOneshot_;
                                 update();
                         }
 
                         void enableEt()
                         {
-                                event_ |= kEtEvent_;
+                                event_ |= kEt_;
                                 update();
                         }
 
                         void disableEt()
                         {
-                                event_ &= ~kEtEvent_;
+                                event_ &= ~kEt_;
                                 update();
                         }
 
@@ -101,11 +101,11 @@ namespace doggy
 
                         bool isWriting() const { return event_ & kWriteEvent_; }
 
-                        bool isRdhup() const { return event_ & kRdhupEvent_; }
+                        bool isRdhup() const { return event_ & kRdhup_; }
 
-                        bool isOneshot() const { return event_ & kOneshotEvent_; }
+                        bool isOneshot() const { return event_ & kOneshot_; }
 
-                        bool isEt() const { return event_ & kEtEvent_; }
+                        bool isEt() const { return event_ & kEt_; }
 
                         void setReadCallback(const EventCallback &cb) { readCallback_ = cb; }
 
@@ -134,9 +134,9 @@ namespace doggy
                         static constexpr int kNoneEvent = 0;
                         static constexpr int kReadEvent_ = EPOLLIN | EPOLLPRI;
                         static constexpr int kWriteEvent_ = EPOLLOUT;
-                        static constexpr int kRdhupEvent_ = EPOLLRDHUP;
-                        static constexpr int kOneshotEvent_ = EPOLLONESHOT;
-                        static constexpr int kEtEvent_ = EPOLLET;
+                        static constexpr int kRdhup_ = EPOLLRDHUP;
+                        static constexpr int kOneshot_ = EPOLLONESHOT;
+                        static constexpr int kEt_ = EPOLLET;
 
                         EventLoop *loop_;
                         int fd_;
