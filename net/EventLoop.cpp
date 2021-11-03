@@ -8,7 +8,7 @@ void EventLoop::doPendingFunctors()
 {
         std::vector<Functor> temp;
 
-        callPending_.store(true, std::memory_order_release);
+        callPending_.store(true, std::memory_order_relaxed);
         {
                 std::lock_guard<std::mutex> lk(pendingQueueMutex_);
                 temp.swap(pendingQueue_);
