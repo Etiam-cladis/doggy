@@ -4,7 +4,7 @@
 
 namespace doggy
 {
-        namespace socketOps
+        namespace SocketOps
         {
                 // T must be sockaddr_in or sockaddr_in6
                 template <typename T, typename = std::enable_if_t<std::is_same_v<T, sockaddr_in> || std::is_same_v<T, sockaddr_in6>>>
