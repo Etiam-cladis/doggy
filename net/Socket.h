@@ -25,7 +25,7 @@ namespace doggy
 
                         bool getTcpInfo(tcp_info *) const;
 
-                        void bindAddress(const InetAddress &localaddr);
+                        void bindAddress(InetAddress &localaddr);
 
                         void listen();
 

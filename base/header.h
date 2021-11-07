@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <thread>
 #include <future>
+#include <variant>
 
 #include <netinet/in.h>
 #include <sys/socket.h>

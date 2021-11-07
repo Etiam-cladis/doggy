@@ -6,12 +6,6 @@ namespace doggy
 {
         namespace SocketOps
         {
-                // T must be sockaddr_in or sockaddr_in6
-                template <typename T, typename = std::enable_if_t<std::is_same_v<T, sockaddr_in> || std::is_same_v<T, sockaddr_in6>>>
-                decltype(auto) sockaddr_cast(T *socketAddress)
-                {
-                        return reinterpret_cast<sockaddr *>(socketAddress);
-                }
 
                 ssize_t readv(int fd, const struct iovec *iov, int iovCount)
                 {
@@ -29,10 +23,10 @@ namespace doggy
                 }
 
                 int createNonblockingOrDie(sa_family_t family);
-                int connect(int sockfd, const struct sockaddr *addr);
-                void bindOrDie(int sockfd, const struct sockaddr *addr);
+                int connect(int sockfd, const sockaddr *addr);
+                void bindOrDie(int sockfd, const sockaddr *addr);
                 void listenOrDie(int sockfd);
-                int accept(int sockfd, struct sockaddr_in6 *addr);
+                int accept(int sockfd, sockaddr_in6 *addr);
                 void close(int sockfd);
                 void shutdownWrite(int sockfd);
                 sockaddr_in6 getLocalAddr(int sockfd);
