@@ -2,7 +2,7 @@
 
 #include "./header.h"
 
-#include "../net/Channel.h"
+#include "./Channel.h"
 #include "./Epoll.h"
 
 namespace doggy

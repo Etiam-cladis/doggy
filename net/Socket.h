@@ -29,7 +29,8 @@ namespace doggy
 
                         void listen();
 
-                        int accept(InetAddress *peeraddr);
+                        int accept(InetAddress &peeraddr);
+                        int accept();
 
                         void shutdownWrite();
 

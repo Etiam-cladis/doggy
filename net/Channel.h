@@ -153,6 +153,7 @@ namespace doggy
                         EventCallback closeCallback_;
                         EventCallback errorCallback_;
                 };
+
         } // namespace net
 
 } // namespace doggy

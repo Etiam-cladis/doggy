@@ -6,7 +6,8 @@
                 "${default}",
                 "${workspaceFolder}/net",
                 "${workspaceFolder}",
-                "${workspaceFolder}/base"
+                "${workspaceFolder}/base",
+                "${workspaceFolder}/net"
             ],
             "compilerPath": "/usr/local/bin/gcc",
             "cStandard": "gnu17",

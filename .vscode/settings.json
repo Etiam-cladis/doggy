@@ -2,6 +2,7 @@
         "files.associations": {
                 "cassert": "cpp",
                 "thread": "cpp",
-                "functional": "cpp"
+                "functional": "cpp",
+                "type_traits": "cpp"
         }
 }
