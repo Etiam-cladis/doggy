@@ -6,7 +6,7 @@
 #include <string>
 #include <cstring>
 #include <cassert>
-#include <errno.h>
+#include <cerrno>
 #include <iostream>
 #include <thread>
 #include <mutex>
@@ -29,3 +29,5 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
+#include <sys/eventfd.h>
+#include <unistd.h>

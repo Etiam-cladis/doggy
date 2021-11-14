@@ -29,72 +29,69 @@ namespace doggy
 
                         void setRevents(int rev) { rEvent_ = rev; }
 
-                        bool isNoneEvent() const { return event_ == kNoneEvent; }
+                        bool isNoneRWEvent() const { return !isReading() && !isWriting(); }
 
                         void enableRead()
                         {
                                 event_ |= kReadEvent_;
-                                update();
+                                updateRW();
                         }
 
                         void disableRead()
                         {
                                 event_ &= ~kReadEvent_;
-                                update();
+                                updateRW();
                         }
 
                         void enableWrite()
                         {
                                 event_ |= kWriteEvent_;
-                                update();
+                                updateRW();
                         }
 
                         void disableWrite()
                         {
                                 event_ &= ~kWriteEvent_;
-                                update();
+                                updateRW();
                         }
 
                         void enableRdhup()
                         {
                                 event_ |= kRdhup_;
-                                update();
+                                updateOther();
                         }
 
                         void disableRdhup()
                         {
                                 event_ &= ~kRdhup_;
-                                update();
+                                updateOther();
                         }
 
                         void enableOneshot()
                         {
                                 event_ |= kOneshot_;
-                                update();
+                                updateOther();
                         }
 
                         void disableOneshot()
                         {
                                 event_ &= ~kOneshot_;
-                                update();
+                                updateOther();
                         }
-
                         void enableEt()
                         {
                                 event_ |= kEt_;
-                                update();
+                                updateOther();
                         }
-
                         void disableEt()
                         {
                                 event_ &= ~kEt_;
-                                update();
+                                updateOther();
                         }
-
                         void disableAll()
                         {
-                                event_ = kNoneEvent;
-                                update();
+                                event_ = 0;
+                                updateRW();
                         }
 
                         bool isReading() const { return event_ & kReadEvent_; }
@@ -129,9 +126,9 @@ namespace doggy
                         EventLoop *ownerLoop() const { return loop_; }
 
                 private:
-                        void update();
+                        void updateRW();
+                        void updateOther();
 
-                        static constexpr int kNoneEvent = 0;
                         static constexpr int kReadEvent_ = EPOLLIN | EPOLLPRI;
                         static constexpr int kWriteEvent_ = EPOLLOUT;
                         static constexpr int kRdhup_ = EPOLLRDHUP;

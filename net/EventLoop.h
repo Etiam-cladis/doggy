@@ -26,13 +26,15 @@ namespace doggy
                         void loop();
                         void quit();
                         void wakeup();
+                        void handleRead();
 
                         void runInLoop(const Functor &cb);
                         void runInLoop(Functor &&cb);
                         void queueInLoop(const Functor &cb);
                         void queueInLoop(Functor &&cb);
 
-                        void updateChannel(Channel *channel);
+                        void updateChannelRW(Channel *channel);
+                        void updateChannelOther(Channel *channel);
 
                         void removeChannel(Channel *channel);
 
@@ -49,12 +51,18 @@ namespace doggy
                         void doPendingFunctors();
 
                 private:
+                        std::atomic<bool> looping_;
+                        std::atomic<bool> quit_;
+                        std::atomic<bool> eventHandling_;
                         std::thread::id threadId_;
 
                         std::unique_ptr<Epoll> poller_;
 
                         int wakeupFd_;
                         std::unique_ptr<Channel> wakeupChannel_;
+
+                        ChannelList channelList_;
+                        Channel *currentChannel_;
 
                         std::atomic<bool> callPending_;
                         std::mutex pendingQueueMutex_;

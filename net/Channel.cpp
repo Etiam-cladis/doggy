@@ -6,7 +6,7 @@ using namespace doggy::net;
 Channel::Channel(EventLoop *loop, int fd)
     : loop_{loop},
       fd_{fd},
-      event_{kNoneEvent},
+      event_{0},
       rEvent_{0},
       index_{-1},
       eventHading_{false},
@@ -20,15 +20,20 @@ Channel::~Channel()
         assert(!addedToLoop_);
 }
 
-void Channel::update()
+void Channel::updateRW()
 {
         addedToLoop_ = true;
-        loop_->updateChannel(this);
+        loop_->updateChannelRW(this);
+}
+
+void Channel::updateOther()
+{
+        loop_->updateChannelOther(this);
 }
 
 void Channel::remove()
 {
-        assert(isNoneEvent());
+        assert(isNoneRWEvent());
         addedToLoop_ = false;
         loop_->removeChannel(this);
 }
