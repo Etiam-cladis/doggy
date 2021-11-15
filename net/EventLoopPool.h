@@ -11,7 +11,7 @@ namespace doggy
                 class EventLoopPool
                 {
                 public:
-                        EventLoopPool(EventLoop *baseLoop, unsigned int numThreads = std::thread::hardware_concurrency());
+                        EventLoopPool(unsigned int numThreads = std::thread::hardware_concurrency());
                         ~EventLoopPool();
 
                 public:
@@ -20,6 +20,15 @@ namespace doggy
 
                 public:
                         void start();
+                        void stopAll();
+
+                        // vaild call after start()
+                        EventLoop *getNextLoop();
+
+                        // Func  should be  like void()
+                        // TODO other Func format
+                        template <typename Func, typename = std::enable_if_t<std::is_invocable_v<Func>>>
+                        void runInPool(Func &&func);
 
                         // set number of threads before started or do nothing.
                         void setNumThreads(unsigned int num)
@@ -28,20 +37,25 @@ namespace doggy
                                         numThreads_ = num;
                         };
 
-                        EventLoop *getNextLoop();
-                        std::vector<EventLoop *> getAllLoops();
-
                         bool isStarted() { return started_.load(std::memory_order_acquire); };
 
                 private:
-                        EventLoop *baseLoop_;
                         std::atomic<bool> started_;
+
                         unsigned int numThreads_;
                         std::vector<std::thread> threads_;
 
                         int nextLoop_;
-                        std::vector<EventLoop *> loops_;
+                        std::vector<std::unique_ptr<EventLoop>> loops_;
                 };
+
+                template <typename Func, typename>
+                void EventLoopPool::runInPool(Func &&func)
+                {
+                        assert(started_.load(std::memory_order_relaxed));
+                        EventLoop *lp = getNextLoop();
+                        lp->runInLoop(std::forward<Func>(func));
+                }
 
         } // namespace net
 

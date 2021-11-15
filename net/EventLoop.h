@@ -26,16 +26,15 @@ namespace doggy
                         void loop();
                         void quit();
                         void wakeup();
-                        void handleRead();
 
                         void runInLoop(const Functor &cb);
                         void runInLoop(Functor &&cb);
                         void queueInLoop(const Functor &cb);
                         void queueInLoop(Functor &&cb);
+                        size_t queueSize() const;
 
                         void updateChannelRW(Channel *channel);
                         void updateChannelOther(Channel *channel);
-
                         void removeChannel(Channel *channel);
 
                         void assertInLoopThread()
@@ -46,8 +45,13 @@ namespace doggy
                         bool isInLoopThread() { return threadId_ == std::this_thread::get_id(); }
 
                 private:
-                        void abortNotInThreadLoop();
-                        void wakeupReadHading();
+                        void abortNotInThreadLoop()
+                        {
+                                // LOG FATAL TODO
+                                abort();
+                        }
+
+                        void wakeupReadHanding();
                         void doPendingFunctors();
 
                 private:
@@ -61,11 +65,11 @@ namespace doggy
                         int wakeupFd_;
                         std::unique_ptr<Channel> wakeupChannel_;
 
-                        ChannelList channelList_;
+                        ChannelList activeChannelList_;
                         Channel *currentChannel_;
 
                         std::atomic<bool> callPending_;
-                        std::mutex pendingQueueMutex_;
+                        mutable std::mutex pendingQueueMutex_;
                         std::vector<Functor> pendingQueue_;
                 };
 
