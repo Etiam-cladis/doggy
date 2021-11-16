@@ -34,16 +34,16 @@ namespace doggy
 
                         void shutdownWrite();
 
-                        // default on
+                        // default on in server
                         void setTcpNoDelay(bool on);
 
-                        // default on
+                        // default on in server
                         void setReuseAddr(bool on);
 
-                        // default on
+                        // default on in server
                         void setReusePort(bool on);
 
-                        // default on
+                        // default on in server
                         void setKeepAlive(bool on);
 
                 private:

@@ -36,7 +36,6 @@ namespace doggy
                         bool getTcpInfo(tcp_info *) const;
 
                 public:
-                        void send(void *message, int len);
                         void send(const std::string &message);
                         void send(std::string &&message);
                         void send(doggy::base::Buff &message);
@@ -64,10 +63,9 @@ namespace doggy
                         void handleClose();
                         void handleError();
 
-                        void sendInLoop(const std::string &&message);
+                        void sendInLoop(const std::string &message);
                         void sendInLoop(std::string &&message);
-                        void sendInLoop(doggy::base::Buff &message);
-                        void sendInLoop(const void *message, size_t len);
+                        void sendInLoop(const void *buf, size_t len);
 
                         void shutdownInLoop();
                         void forceCloseInLoop();

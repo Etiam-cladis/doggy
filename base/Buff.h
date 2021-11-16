@@ -2,8 +2,6 @@
 
 #include "./header.h"
 
-#include "base/String.h"
-
 namespace doggy
 {
         namespace base
@@ -115,11 +113,6 @@ namespace doggy
                         {
                                 assert(len <= readableBytes());
                                 return std::string().assign(peek(), len);
-                        }
-
-                        doggy::String retrieveAsMyString()
-                        {
-                                return doggy::String(peek(), readableBytes());
                         }
 
                         void retrieveAll()
