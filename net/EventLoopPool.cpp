@@ -14,35 +14,18 @@ EventLoopPool::EventLoopPool(unsigned int numThreads)
 
 EventLoopPool::~EventLoopPool()
 {
-        started_.store(false, std::memory_order_release);
-        for (auto &t : threads_)
-        {
-                t.join();
-        }
 }
 
-void EventLoopPool::start()
+void EventLoopPool::start(const ThreadInitCallback &cb)
 {
         assert(!started_.load(std::memory_order_relaxed));
 
         started_.store(true, std::memory_order_relaxed);
         for (int i = 0; i < numThreads_; ++i)
         {
-                std::unique_ptr<EventLoop> loop = std::make_unique<EventLoop>();
-                loops_.emplace_back(std::move(loop));
-                EventLoop *lp = loops_[i].get();
-                threads_.emplace_back(std::thread([lp]()
-                                                  { lp->loop(); }));
-        }
-}
-void EventLoopPool::stopAll()
-{
-        assert(started_.load(std::memory_order_relaxed));
-
-        started_.store(false, std::memory_order_release);
-        for (auto &&loop : loops_)
-        {
-                loop->quit();
+                std::unique_ptr<EventLoopThread> lp = std::make_unique<EventLoopThread>(cb);
+                loops_.push_back(lp->startLoop());
+                threads_.emplace_back(std::move(lp));
         }
 }
 
@@ -53,7 +36,7 @@ EventLoop *EventLoopPool::getNextLoop()
         EventLoop *lp = nullptr;
         if (!loops_.empty())
         {
-                lp = loops_[nextLoop_].get();
+                lp = loops_[nextLoop_];
                 ++nextLoop_;
                 nextLoop_ %= numThreads_;
         }

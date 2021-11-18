@@ -3,6 +3,7 @@
 #include "./header.h"
 
 #include "./EventLoop.h"
+#include "./EventLoopThread.h"
 
 namespace doggy
 {
@@ -10,6 +11,8 @@ namespace doggy
         {
                 class EventLoopPool
                 {
+                        using ThreadInitCallback = std::function<void(EventLoop *)>;
+
                 public:
                         EventLoopPool(unsigned int numThreads = std::thread::hardware_concurrency());
                         ~EventLoopPool();
@@ -19,8 +22,7 @@ namespace doggy
                         EventLoopPool &operator=(const EventLoopPool &) = delete;
 
                 public:
-                        void start();
-                        void stopAll();
+                        void start(const ThreadInitCallback &cb);
 
                         // vaild call after start()
                         EventLoop *getNextLoop();
@@ -43,10 +45,10 @@ namespace doggy
                         std::atomic<bool> started_;
 
                         unsigned int numThreads_;
-                        std::vector<std::thread> threads_;
+                        std::vector<std::unique_ptr<EventLoopThread>> threads_;
 
                         int nextLoop_;
-                        std::vector<std::unique_ptr<EventLoop>> loops_;
+                        std::vector<EventLoop *> loops_;
                 };
 
                 template <typename Func, typename>

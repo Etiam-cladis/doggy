@@ -24,6 +24,11 @@ TcpConnection::TcpConnection(EventLoop *loop, int sockFd, const InetAddress &loc
         channel_->setErrorCallback([p]()
                                    { p->handleError(); });
 
+        channel_->enableRead();
+        channel_->enableWrite();
+        channel_->enableEt();
+        channel_->enableRdhup();
+
         socket_->setTcpNoDelay(true);
         socket_->setKeepAlive(true);
 }
@@ -91,8 +96,70 @@ void TcpConnection::send(doggy::base::Buff &buff)
         }
 }
 
+void TcpConnection::sendInLoop(const std::string &message)
+{
+        sendInLoop(message.data(), message.length());
+}
+
+void TcpConnection::sendInLoop(std::string &&message)
+{
+        sendInLoop(message.data(), message.length());
+}
+
+void TcpConnection::sendInLoop(const void *buf, size_t len)
+{
+        loop_->assertInLoopThread();
+        ssize_t nwrote = 0;
+
+        if (channel_->isWriting() && outputBuffer_.readableBytes() == 0)
+        {
+                nwrote = ::send(channel_->fd(), buf, len, MSG_NOSIGNAL);
+                if (nwrote >= 0)
+                {
+                        // TODO
+                        // if writeCompleteCallback
+                }
+                else
+                {
+                        nwrote = 0;
+                        if (errno != EWOULDBLOCK)
+                        {
+                                // TODO LOG SYSERR
+                        }
+                }
+        }
+
+        assert(nwrote >= 0);
+
+        if (static_cast<size_t>(nwrote) < len)
+        {
+                outputBuffer_.appen(static_cast<const char *>(buf) + nwrote, len - nwrote);
+                if (!channel_->isWriting())
+                {
+                        channel_->enableWrite();
+                }
+        }
+}
+
 void TcpConnection::shutdownWrite()
 {
+        if (tcpConnectionState_.load(std::memory_order_relaxed) == kConnected)
+        {
+                setState(kDisconnecting);
+                auto p = shared_from_this();
+                loop_->runInLoop([p]()
+                                 { p->shutdownWrite(); });
+        }
+}
+
+void TcpConnection::shutdownInLoop()
+{
+        loop_->assertInLoopThread();
+        if (channel_->isWriting())
+        {
+                channel_->disableWrite();
+                socket_->shutdownWrite();
+        }
 }
 
 void TcpConnection::forceClose()
@@ -128,22 +195,6 @@ void TcpConnection::handleClose()
 }
 
 void TcpConnection::handleError()
-{
-}
-
-void TcpConnection::sendInLoop(const std::string &message)
-{
-}
-
-void TcpConnection::sendInLoop(std::string &&message)
-{
-}
-
-void TcpConnection::sendInLoop(const void *buf, size_t len)
-{
-}
-
-void TcpConnection::shutdownInLoop()
 {
 }
 
