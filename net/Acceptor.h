@@ -3,6 +3,7 @@
 #include "./header.h"
 
 #include "./EventLoop.h"
+#include "./Channel.h"
 #include "./Socket.h"
 #include "./InetAddr.h"
 
@@ -25,7 +26,7 @@ namespace doggy
                 private:
                         EventLoop *loop_;
                         Socket acceptSockId_;
-                        InetAddress acceptInet_;
+                        Channel acceptChannel_;
                         newConnectionCallBack newConnectionCallBack_;
                 };
 

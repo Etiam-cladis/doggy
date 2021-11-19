@@ -17,7 +17,7 @@ namespace doggy
                         using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
                         using ConnectionCallback = std::function<void(const TcpConnectionPtr &)>;
                         using CloseCallback = std::function<void(const TcpConnectionPtr &)>;
-                        using MessageCallback = std::function<void(const TcpConnectionPtr &)>;
+                        using MessageCallback = std::function<void(const TcpConnectionPtr &, doggy::base::Buff &buff)>;
 
                 public:
                         TcpConnection(EventLoop *loop, int sockFd, const InetAddress &localAddr, const InetAddress &peerAddr);
