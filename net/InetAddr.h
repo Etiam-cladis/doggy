@@ -29,8 +29,8 @@ namespace doggy
                         InetAddress &operator=(sockaddr_in6 &&sa) { sockaddr_ = std::move(sa); }
 
                 public:
-                        const sockaddr *getSockaddr();
-                        sa_family_t getFamily();
+                        const sockaddr *getSockaddr() const;
+                        sa_family_t getFamily() const;
                         std::string inetNtop();
 
                 private:

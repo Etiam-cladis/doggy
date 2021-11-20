@@ -15,7 +15,7 @@ bool Socket::getTcpInfo(tcp_info *tcpInfo) const
         return ::getsockopt(sockFd_, SOL_TCP, TCP_INFO, tcpInfo, &n) == 0;
 }
 
-void Socket::bindAddress(InetAddress &localaddr)
+void Socket::bindAddress(const InetAddress &localaddr)
 {
         SocketOps::bindOrDie(sockFd_, localaddr.getSockaddr());
 }

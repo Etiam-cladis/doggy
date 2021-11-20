@@ -56,14 +56,14 @@ InetAddress::InetAddress(const std::string &ip, uint16_t port, bool ipv6)
         }
 }
 
-const sockaddr *InetAddress::getSockaddr()
+const sockaddr *InetAddress::getSockaddr() const
 {
         return std::visit([](auto &&sa) -> const sockaddr *
                           {
                                                           using T = std::decay_t<decltype(sa)>;
                                                           if (std::is_same_v<T, sockaddr_in> || std::is_same_v<T, sockaddr_in6>)
                                                           {
-                                                                  return reinterpret_cast<sockaddr *>(&sa);
+                                                                  return reinterpret_cast<const sockaddr *>(&sa);
                                                           }
                                                           else
                                                           {
@@ -73,7 +73,7 @@ const sockaddr *InetAddress::getSockaddr()
                           sockaddr_);
 }
 
-sa_family_t InetAddress::getFamily()
+sa_family_t InetAddress::getFamily() const
 {
         int index = static_cast<int>(sockaddr_.index());
         switch (index)
