@@ -14,7 +14,7 @@ namespace doggy
                         using ThreadInitCallback = std::function<void(EventLoop *)>;
 
                 public:
-                        EventLoopPool(unsigned int numThreads = std::thread::hardware_concurrency());
+                        EventLoopPool(unsigned int numThreads);
                         ~EventLoopPool();
 
                 public:
