@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./header.h"
+#include "../base/header.h"
 
 namespace doggy
 {
@@ -8,6 +8,7 @@ namespace doggy
         {
                 class Connector
                 {
+                private:
                 };
 
         } // namespace net

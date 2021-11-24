@@ -23,7 +23,11 @@ TcpServer::~TcpServer()
 void TcpServer::setNumThreads(int numThreads)
 {
         assert(numThreads >= 0);
-        threadPool_->setNumThreads(numThreads_);
+        if (!started_.load(std::memory_order_relaxed))
+        {
+                numThreads_ = numThreads;
+                threadPool_->setNumThreads(numThreads_);
+        }
 }
 
 void TcpServer::start()
