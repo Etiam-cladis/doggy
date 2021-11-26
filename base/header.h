@@ -19,6 +19,7 @@
 #include <thread>
 #include <future>
 #include <variant>
+#include <optional>
 #include <set>
 #include <chrono>
 #include <ratio>

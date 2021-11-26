@@ -2,6 +2,8 @@
 
 #include "../base/header.h"
 
+#include "./InetAddr.h"
+
 namespace doggy
 {
         namespace net

@@ -4,6 +4,9 @@
 
 #include "./Channel.h"
 #include "./Epoll.h"
+#include "./Timer.h"
+#include "./TimerId.h"
+#include "./TimerQueue.h"
 
 namespace doggy
 {
@@ -13,6 +16,8 @@ namespace doggy
                 {
                         using Functor = std::function<void()>;
                         using ChannelList = std::vector<Channel *>;
+                        using Timestamp = std::chrono::time_point<std::chrono::system_clock, std::chrono::microseconds>;
+                        using TimerCallback = std::function<void()>;
 
                 public:
                         EventLoop();
@@ -32,6 +37,14 @@ namespace doggy
                         void queueInLoop(const Functor &cb);
                         void queueInLoop(Functor &&cb);
                         size_t queueSize() const;
+
+                        TimerId runAt(Timestamp time, const TimerCallback &cb);
+                        TimerId runAt(Timestamp time, TimerCallback &&cb);
+                        TimerId runAfter(std::chrono::microseconds delay, const TimerCallback &cb);
+                        TimerId runAfter(std::chrono::microseconds delay, TimerCallback &&cb);
+                        TimerId runEvery(std::chrono::microseconds interval, const TimerCallback &cb);
+                        TimerId runEvery(std::chrono::microseconds interval, TimerCallback &&cb);
+                        void cancel(TimerId timerId);
 
                         void updateChannelRW(Channel *channel);
                         void updateChannelOther(Channel *channel);
@@ -61,6 +74,7 @@ namespace doggy
                         std::thread::id threadId_;
 
                         std::unique_ptr<Epoll> poller_;
+                        std::unique_ptr<TimerQueue> timerQueue_;
 
                         int wakeupFd_;
                         std::unique_ptr<Channel> wakeupChannel_;

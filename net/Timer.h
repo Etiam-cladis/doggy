@@ -12,10 +12,11 @@ namespace doggy
                 using namespace std::chrono_literals;
                 class Timer
                 {
+                        using Timestamp = std::chrono::time_point<std::chrono::system_clock, std::chrono::microseconds>;
                         using TimerCallback = std::function<void()>;
 
                 public:
-                        Timer(const TimerCallback &cb, std::chrono::microseconds when, std::chrono::microseconds interval)
+                        Timer(const TimerCallback &cb, Timestamp when, std::chrono::microseconds interval)
                             : callback_(cb),
                               interval_(interval),
                               repeat_(interval > 0us),
@@ -23,7 +24,7 @@ namespace doggy
                         {
                         }
 
-                        Timer(TimerCallback &&cb, std::chrono::microseconds when, std::chrono::microseconds interval)
+                        Timer(TimerCallback &&cb, Timestamp when, std::chrono::microseconds interval)
                             : callback_(std::move(cb)),
                               interval_(interval),
                               repeat_(interval > 0us),
@@ -36,15 +37,15 @@ namespace doggy
                                 callback_();
                         }
 
-                        std::chrono::microseconds expiration() const { return expiration_; }
+                        Timestamp expiration() const { return expiration_.value_or(Timestamp()); }
                         bool repeat() const { return repeat_; }
                         int64_t sequence() const { return sequence_; }
 
-                        void restart(std::chrono::microseconds now);
+                        void restart(Timestamp now);
 
                 private:
                         const TimerCallback callback_;
-                        std::chrono::microseconds expiration_;
+                        std::optional<Timestamp> expiration_;
                         const std::chrono::microseconds interval_;
                         const bool repeat_;
                         const int64_t sequence_;

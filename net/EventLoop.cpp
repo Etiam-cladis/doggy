@@ -4,6 +4,8 @@
 using namespace doggy;
 using namespace doggy::net;
 
+using namespace std::chrono_literals;
+
 namespace
 {
         __thread EventLoop *tloopInThisThread = nullptr;
@@ -26,6 +28,7 @@ EventLoop::EventLoop()
       eventHandling_(false),
       threadId_(std::this_thread::get_id()),
       poller_(std::make_unique<Epoll>(this)),
+      timerQueue_(std::make_unique<TimerQueue>(this)),
       wakeupFd_(creatEventFd()),
       wakeupChannel_(std::make_unique<Channel>(this, wakeupFd_)),
       currentChannel_(nullptr),
@@ -162,6 +165,40 @@ size_t EventLoop::queueSize() const
 {
         std::lock_guard<std::mutex> lk(pendingQueueMutex_);
         return pendingQueue_.size();
+}
+
+TimerId EventLoop::runAt(Timestamp time, const TimerCallback &cb)
+{
+        return timerQueue_->addTimer(cb, time, 0us);
+}
+
+TimerId EventLoop::runAt(Timestamp time, TimerCallback &&cb)
+{
+        return timerQueue_->addTimer(cb, time, 0us);
+}
+
+TimerId EventLoop::runAfter(std::chrono::microseconds delay, const TimerCallback &cb)
+{
+        Timestamp time(std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) + delay);
+        return runAt(time, cb);
+}
+
+TimerId EventLoop::runAfter(std::chrono::microseconds delay, TimerCallback &&cb)
+{
+        Timestamp time(std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) + delay);
+        return runAt(time, std::move(cb));
+}
+
+TimerId EventLoop::runEvery(std::chrono::microseconds interval, const TimerCallback &cb)
+{
+        Timestamp time(std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) + interval);
+        return timerQueue_->addTimer(cb, time, interval);
+}
+
+TimerId EventLoop::runEvery(std::chrono::microseconds interval, TimerCallback &&cb)
+{
+        Timestamp time(std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) + interval);
+        return timerQueue_->addTimer(std::move(cb), time, interval);
 }
 
 void EventLoop::updateChannelRW(Channel *channel)
