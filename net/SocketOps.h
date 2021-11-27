@@ -31,6 +31,8 @@ namespace doggy
                 void shutdownWrite(int sockfd);
                 sockaddr_in6 getLocalAddr(int sockfd);
                 sockaddr_in6 getPeerAddr(int sockfd);
+                int getSocketError(int sockfd);
+                bool isSelfConnect(int sockfd);
         } // namespace Socket
 
 } // namespace doggy

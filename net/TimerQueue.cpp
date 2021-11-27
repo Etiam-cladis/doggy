@@ -98,12 +98,6 @@ TimerId TimerQueue::addTimer(TimerCallback &&cb, Timestamp when, std::chrono::mi
         return TimerId(p, p->sequence());
 }
 
-void TimerQueue::cancel(TimerId timerId)
-{
-        loop_->runInLoop([this, &timerId]()
-                         { this->cancelInLoop(timerId); });
-}
-
 void TimerQueue::addTimerInLoop(std::unique_ptr<Timer> &timer)
 {
         loop_->assertInLoopThread();
@@ -114,6 +108,12 @@ void TimerQueue::addTimerInLoop(std::unique_ptr<Timer> &timer)
         {
                 resetTimerFd(timerFd_, p->expiration());
         }
+}
+
+void TimerQueue::cancel(TimerId timerId)
+{
+        loop_->runInLoop([this, &timerId]()
+                         { this->cancelInLoop(timerId); });
 }
 
 void TimerQueue::cancelInLoop(TimerId timerId)
