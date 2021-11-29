@@ -13,12 +13,12 @@ namespace doggy
         namespace net
         {
                 using namespace std::chrono_literals;
-                class Connector : public std::enable_shared_from_this<Connector>
+                class Connector
                 {
                         using NewConnectionCallback = std::function<void(int sockFd)>;
 
                 public:
-                        Connector(EventLoop *loop, TimerQueue *timerQueue, const InetAddress &serverAddr);
+                        Connector(EventLoop *loop, const InetAddress &serverAddr);
                         ~Connector();
 
                 public:
@@ -58,7 +58,7 @@ namespace doggy
                         static const std::chrono::milliseconds kInitRetryDelayMs;
 
                         EventLoop *loop_;
-                        TimerQueue *timerQueue_;
+                        TimerQueue timerQueue_;
                         TimerId cancelTimerId_;
                         InetAddress serverAddr_;
                         std::atomic<bool> connect_;

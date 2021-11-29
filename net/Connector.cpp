@@ -8,9 +8,9 @@ using namespace doggy::net;
 static const std::chrono::milliseconds kMaxRetryDelayMs = 30 * 1000ms;
 static const std::chrono::milliseconds kInitRetryDelayMs = 500ms;
 
-Connector::Connector(EventLoop *loop, TimerQueue *timerQueue, const InetAddress &serverAddr)
+Connector::Connector(EventLoop *loop, const InetAddress &serverAddr)
     : loop_(loop),
-      timerQueue_(timerQueue),
+      timerQueue_(loop),
       serverAddr_(serverAddr_),
       connect_(false),
       state_(kDisconnected),
@@ -26,9 +26,8 @@ Connector::~Connector()
 void Connector::start()
 {
         connect_.store(true, std::memory_order_release);
-        auto p = shared_from_this();
-        loop_->runInLoop([p]()
-                         { p->startInLoop(); });
+        loop_->runInLoop([this]()
+                         { this->startInLoop(); });
 }
 
 void Connector::startInLoop()
@@ -44,10 +43,12 @@ void Connector::startInLoop()
 void Connector::stop()
 {
         connect_.store(false, std::memory_order_release);
-        timerQueue_->cancel(cancelTimerId_);
-        auto p = shared_from_this();
-        loop_->runInLoop([p]()
-                         { p->startInLoop(); });
+        if (cancelTimerId_.hasTimer())
+        {
+                timerQueue_.cancel(cancelTimerId_);
+        }
+        loop_->runInLoop([this]()
+                         { this->stopInLoop(); });
 }
 
 void Connector::stopInLoop()
@@ -113,11 +114,10 @@ void Connector::connecting(int sockFd)
         setState(kConnecting);
         assert(!channel_);
         channel_.reset(new Channel(loop_, sockFd));
-        auto p = shared_from_this();
-        channel_->setWriteCallback([p]()
-                                   { p->handleWrite(); });
-        channel_->setErrorCallback([p]()
-                                   { p->handleError(); });
+        channel_->setWriteCallback([this]()
+                                   { this->handleWrite(); });
+        channel_->setErrorCallback([this]()
+                                   { this->handleError(); });
         channel_->enableWrite();
         channel_->enableEt();
 }
@@ -128,9 +128,8 @@ int Connector::removeAndResetChannel()
         channel_->remove();
         int sockFd = channel_->fd();
 
-        auto p = shared_from_this();
-        loop_->runInLoop([p]()
-                         { p->resetChannel(); });
+        loop_->runInLoop([this]()
+                         { this->resetChannel(); });
 
         return sockFd;
 }
@@ -190,9 +189,8 @@ void Connector::retry(int sockFd)
         setState(kDisconnected);
         if (connect_.load(std::memory_order_relaxed))
         {
-                auto p = shared_from_this();
-                loop_->runAfter(retryDelayMs_, [p]()
-                                { p->startInLoop(); });
+                cancelTimerId_ = loop_->runAfter(retryDelayMs_, [this]()
+                                                 { this->startInLoop(); });
 
                 retryDelayMs_ = std::min(retryDelayMs_ * 2, kMaxRetryDelayMs);
         }

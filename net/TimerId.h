@@ -21,6 +21,8 @@ namespace doggy
                         {
                         }
 
+                        bool hasTimer() const { return timer_ != nullptr; };
+
                         friend class TimerQueue;
 
                 private:
