@@ -95,16 +95,59 @@ void SocketOps::shutdownWrite(int sockfd)
 
 sockaddr_in6 SocketOps::getLocalAddr(int sockfd)
 {
+        sockaddr_in6 sa{0};
+        socklen_t len = static_cast<socklen_t>(sizeof(sa));
+        if (::getsockname(sockfd, reinterpret_cast<sockaddr *>(&sa), &len) < 0)
+        {
+                // LOG SYSERR
+                abort();
+        }
+        return sa;
 }
 
 sockaddr_in6 SocketOps::getPeerAddr(int sockfd)
 {
+        sockaddr_in6 sa{0};
+        socklen_t len = static_cast<socklen_t>(sizeof(sa));
+        if (::getpeername(sockfd, reinterpret_cast<sockaddr *>(&sa), &len) < 0)
+        {
+                // LOG SYSERR
+                abort();
+        }
+        return sa;
 }
 
 int SocketOps::getSocketError(int sockfd)
 {
+        int optval;
+        socklen_t optlen = static_cast<socklen_t>(sizeof(optval));
+
+        if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) < 0)
+        {
+                return errno;
+        }
+        else
+        {
+                return optval;
+        }
 }
 
 bool SocketOps::isSelfConnect(int sockfd)
 {
+        sockaddr_in6 localAddr = getLocalAddr(sockfd);
+        sockaddr_in6 peerAddr = getPeerAddr(sockfd);
+        if (localAddr.sin6_family == AF_INET)
+        {
+                sockaddr_in *la = reinterpret_cast<sockaddr_in *>(&localAddr);
+                sockaddr_in *pa = reinterpret_cast<sockaddr_in *>(&peerAddr);
+                return la->sin_port == pa->sin_port && la->sin_addr.s_addr == pa->sin_addr.s_addr;
+        }
+        else if (localAddr.sin6_family == AF_INET6)
+        {
+                return localAddr.sin6_port == peerAddr.sin6_port && std::memcmp(&localAddr.sin6_addr, &peerAddr.sin6_addr, sizeof(localAddr.sin6_addr)) == 0;
+        }
+        else
+        {
+                return false;
+        }
 }
