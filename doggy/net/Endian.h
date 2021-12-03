@@ -1,0 +1,5 @@
+#ifndef DOGGY_NET_ENDIAN_H
+#define DOGGY_NET_ENDIAN_H
+
+
+#endif // DOGGY_NET_ENDIAN_H

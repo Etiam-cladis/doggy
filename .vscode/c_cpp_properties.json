@@ -1,19 +1,17 @@
 {
-    "configurations": [
-        {
-            "name": "Linux",
-            "includePath": [
-                "${default}",
-                "${workspaceFolder}/net",
-                "${workspaceFolder}",
-                "${workspaceFolder}/base",
-                "${workspaceFolder}/net"
-            ],
-            "compilerPath": "/usr/local/bin/gcc",
-            "cStandard": "gnu17",
-            "intelliSenseMode": "linux-gcc-x64",
-            "configurationProvider": "ms-vscode.cmake-tools"
-        }
-    ],
-    "version": 4
+        "configurations": [
+                {
+                        "name": "Linux",
+                        "includePath": [
+                                "${workspaceFolder}/**",
+                                "${workspaceFolder}"
+                        ],
+                        "compilerPath": "/usr/local/bin/g++",
+                        "cStandard": "gnu17",
+                        "cppStandard": "gnu++20",
+                        "intelliSenseMode": "linux-gcc-x64",
+                        "configurationProvider": "ms-vscode.cmake-tools"
+                }
+        ],
+        "version": 4
 }

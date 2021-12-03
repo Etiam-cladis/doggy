@@ -1,6 +1,10 @@
 build/
 test/
-base/threadPoll.hpp
-base/String.h
+doggy/base/threadPoll.hpp
+doggy/base/String.h
+doggy/base/loo
 /R
 /TODOlist
+/CMakeLists.txt
+doggy/net/CMakeLists.txt
+/ff
