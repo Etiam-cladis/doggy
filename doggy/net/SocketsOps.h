@@ -8,20 +8,11 @@ namespace doggy
         namespace SocketOps
         {
 
-                ssize_t readv(int fd, const struct iovec *iov, int iovCount)
-                {
-                        return ::readv(fd, iov, iovCount);
-                }
+                ssize_t readv(int fd, const iovec *iov, int iovCount);
 
-                ssize_t readv(int fd, const struct iovec *iov, int iovCount, off_t offset)
-                {
-                        return ::preadv(fd, iov, iovCount, offset);
-                }
+                ssize_t readv(int fd, const iovec *iov, int iovCount, off_t offset);
 
-                ssize_t readv(int fd, const struct iovec *iov, int iovCount, off_t offset, int flags)
-                {
-                        return ::preadv2(fd, iov, iovCount, offset, flags);
-                }
+                ssize_t readv(int fd, const iovec *iov, int iovCount, off_t offset, int flags);
 
                 int createNonblockingOrDie(sa_family_t family);
                 int connect(int sockfd, const sockaddr *addr);

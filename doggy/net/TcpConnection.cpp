@@ -27,10 +27,8 @@ TcpConnection::TcpConnection(EventLoop *loop, int sockFd, const InetAddress &loc
         channel_->setErrorCallback([p]()
                                    { p->handleError(); });
 
-        channel_->enableEt();
         channel_->enableRdhup();
 
-        socket_->setTcpNoDelay(true);
         socket_->setKeepAlive(true);
 }
 
@@ -181,6 +179,16 @@ void TcpConnection::forceCloseInLoop()
         {
                 handleClose();
         }
+}
+
+void TcpConnection::setTcpNoDelay(bool on)
+{
+        socket_->setTcpNoDelay(on);
+}
+
+void TcpConnection::setEtTtrigger(bool on)
+{
+        on ? channel_->enableEt() : channel_->disableEt();
 }
 
 void TcpConnection::startRead()

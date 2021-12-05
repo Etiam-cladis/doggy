@@ -3,7 +3,7 @@
 
 #include "doggy/net/header.h"
 
-#include "doggy/net/Buff.h"
+#include "doggy/net/Buffer.h"
 #include "doggy/net/InetAddress.h"
 
 namespace doggy
@@ -44,8 +44,13 @@ namespace doggy
 
                         void shutdownWrite();
                         void forceClose();
+                        void setTcpNoDelay(bool on);
+                        void setEtTtrigger(bool on);
 
-                        bool isReading() const { return reading_.load(std::memory_order_acquire); }
+                        bool isReading() const
+                        {
+                                return reading_.load(std::memory_order_acquire);
+                        }
                         void startRead();
                         void stopRead();
 

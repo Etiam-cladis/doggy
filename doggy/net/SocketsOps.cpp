@@ -3,6 +3,21 @@
 using namespace doggy;
 using namespace doggy::SocketOps;
 
+ssize_t SocketOps::readv(int fd, const iovec *iov, int iovCount)
+{
+        return ::readv(fd, iov, iovCount);
+}
+
+ssize_t SocketOps::readv(int fd, const iovec *iov, int iovCount, off_t offset)
+{
+        return ::preadv(fd, iov, iovCount, offset);
+}
+
+ssize_t SocketOps::readv(int fd, const iovec *iov, int iovCount, off_t offset, int flags)
+{
+        return ::preadv2(fd, iov, iovCount, offset, flags);
+}
+
 int SocketOps::createNonblockingOrDie(sa_family_t family)
 {
         int sockfd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);

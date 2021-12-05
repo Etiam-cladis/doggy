@@ -1,5 +1,5 @@
-#ifndef DOGGY_NET_BUFF_H
-#define DOGGY_NET_BUFF_H
+#ifndef DOGGY_NET_BUFFER_H
+#define DOGGY_NET_BUFFER_H
 
 #include "doggy/net/header.h"
 
@@ -184,4 +184,4 @@ namespace doggy
 
 } // namespace doggy
 
-#endif // DOGGY_NET_BUFF_H
+#endif // DOGGY_NET_BUFFER_H

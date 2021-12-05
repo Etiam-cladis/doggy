@@ -1,6 +1,6 @@
 #include "doggy/net/header.h"
 
-#include "doggy/net/Buff.h"
+#include "doggy/net/Buffer.h"
 #include "doggy/net/SocketsOps.h"
 
 using namespace doggy;
