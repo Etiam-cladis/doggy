@@ -50,8 +50,8 @@ namespace doggy
                         std::shared_ptr<EventLoopPool> threadPool() { return threadPool_; };
                         void setConnectionCallback(const ConnectionCallback &cb) { connectionCallback_ = cb; };
                         void setConnectionCallback(ConnectionCallback &&cb) { connectionCallback_ = std::move(cb); };
-                        void setMessagCallback(const MessageCallback &cb) { messageCallback_ = cb; };
-                        void setMessagCallback(MessageCallback &&cb) { messageCallback_ = std::move(cb); };
+                        void setMessageCallback(const MessageCallback &cb) { messageCallback_ = cb; };
+                        void setMessageCallback(MessageCallback &&cb) { messageCallback_ = std::move(cb); };
                         void setThreadInitCallback(const ThreadInitCallback &cb) { threadInitCallback_ = cb; };
                         void setThreadInitCallback(ThreadInitCallback &&cb) { threadInitCallback_ = std::move(cb); };
 

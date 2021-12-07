@@ -66,14 +66,12 @@ namespace
 TimerQueue::TimerQueue(EventLoop *loop)
     : loop_(loop),
       timerFd_(creatTimerFd()),
-      timerFdChannel_(loop_, timerFd_),
+      timerFdChannel_(loop, timerFd_),
       timers_(),
       callingExpiredTimers_(false)
 {
         timerFdChannel_.setReadCallback([this]()
                                         { this->handleRead(); });
-        timerFdChannel_.enableRead();
-        timerFdChannel_.enableEt();
 }
 
 TimerQueue::~TimerQueue()
@@ -85,6 +83,18 @@ TimerQueue::~TimerQueue()
 
 TimerId TimerQueue::addTimer(const TimerCallback &cb, Timestamp when, std::chrono::microseconds interval)
 {
+        if (!timerFdChannel_.isReading())
+        {
+                timerFdChannel_.enableRead();
+        }
+
+#ifndef USE_LT_TRIGGER
+        if (!timerFdChannel_.isEt())
+        {
+                timerFdChannel_.enableEt();
+        }
+#endif
+
         std::shared_ptr<Timer> timer = std::make_shared<Timer>(cb, when, interval);
         auto p = timer.get();
         loop_->runInLoop([timer = std::move(timer), this]() mutable
@@ -93,6 +103,18 @@ TimerId TimerQueue::addTimer(const TimerCallback &cb, Timestamp when, std::chron
 }
 TimerId TimerQueue::addTimer(TimerCallback &&cb, Timestamp when, std::chrono::microseconds interval)
 {
+        if (!timerFdChannel_.isReading())
+        {
+                timerFdChannel_.enableRead();
+        }
+
+#ifndef USELTTRIGGER
+        if (!timerFdChannel_.isEt())
+        {
+                timerFdChannel_.enableEt();
+        }
+#endif
+
         std::shared_ptr<Timer> timer = std::make_shared<Timer>(std::move(cb), when, interval);
         auto p = timer.get();
         loop_->runInLoop([timer = std::move(timer), this]() mutable

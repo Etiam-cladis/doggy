@@ -24,7 +24,7 @@ namespace doggy
                         EventLoopPool &operator=(const EventLoopPool &) = delete;
 
                 public:
-                        void start(const ThreadInitCallback &cb);
+                        void start(const ThreadInitCallback &cb = ThreadInitCallback());
 
                         // vaild call after start()
                         EventLoop *getNextLoop();

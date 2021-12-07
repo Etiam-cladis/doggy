@@ -3,12 +3,12 @@ aux_source_directory(. net_SRCS)
 
 add_library(doggy SHARED ${net_SRCS})
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+SET_TARGET_PROPERTIES(doggy  PROPERTIES  VERSION 0.0.2  SOVERSION 0)
+target_link_libraries(doggy pthread)
 
 add_library(doggy_static STATIC ${net_SRCS})
-set_target_properties(doggy_static PROPERTIES OUTPUT_NAME " doggy")
-set_target_properties(doggy PROPERTIES CLEAN_DIRECT_OUTPUT 1)
-set_target_properties(doggy_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
-SET_TARGET_PROPERTIES(doggy  PROPERTIES  VERSION 0.1  SOVERSION 0)
+set_target_properties(doggy_static PROPERTIES OUTPUT_NAME "doggy")
+target_link_libraries(doggy_static pthread)
 
 install(TARGETS doggy  doggy_static
 LIBRARY DESTINATION include/lib

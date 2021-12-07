@@ -12,7 +12,7 @@ InetAddress::InetAddress(uint16_t port, bool loopbackOnly, bool ipv6)
 {
         if (ipv6)
         {
-                sockaddr_ = sockaddr_in6{0};
+                sockaddr_ = std::move(sockaddr_in6{0});
                 auto sa = std::get_if<sockaddr_in6>(&sockaddr_);
                 sa->sin6_family = AF_INET6;
                 in6_addr ip = loopbackOnly ? in6addr_loopback : in6addr_any;
@@ -21,7 +21,7 @@ InetAddress::InetAddress(uint16_t port, bool loopbackOnly, bool ipv6)
         }
         else
         {
-                sockaddr_ = sockaddr_in{0};
+                sockaddr_ = std::move(sockaddr_in{0});
                 auto sa = std::get_if<sockaddr_in>(&sockaddr_);
                 sa->sin_family = AF_INET;
                 in_addr_t ip = loopbackOnly ? kInaddrLoopback : kInaddrAny;
@@ -34,7 +34,7 @@ InetAddress::InetAddress(const std::string &ip, uint16_t port, bool ipv6)
 {
         if (ipv6)
         {
-                sockaddr_ = sockaddr_in6{0};
+                sockaddr_ = std::move(sockaddr_in6{0});
                 auto sa = std::get_if<sockaddr_in6>(&sockaddr_);
                 sa->sin6_family = AF_INET6;
                 sa->sin6_port = ::htons(port);
@@ -45,11 +45,11 @@ InetAddress::InetAddress(const std::string &ip, uint16_t port, bool ipv6)
         }
         else
         {
-                sockaddr_ = sockaddr_in6{0};
+                sockaddr_ = std::move(sockaddr_in{0});
                 auto sa = std::get_if<sockaddr_in>(&sockaddr_);
                 sa->sin_family = AF_INET;
                 sa->sin_port = ::htons(port);
-                if (::inet_pton(AF_INET6, ip.c_str(), &sa->sin_addr) <= 0)
+                if (::inet_pton(AF_INET, ip.c_str(), &sa->sin_addr) <= 0)
                 {
                         // LOG SYSERR
                 }

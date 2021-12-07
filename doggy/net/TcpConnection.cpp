@@ -27,8 +27,6 @@ TcpConnection::TcpConnection(EventLoop *loop, int sockFd, const InetAddress &loc
         channel_->setErrorCallback([p]()
                                    { p->handleError(); });
 
-        channel_->enableRdhup();
-
         socket_->setKeepAlive(true);
 }
 
@@ -228,7 +226,9 @@ void TcpConnection::connectEstablished()
         loop_->assertInLoopThread();
         assert(tcpConnectionState_.load(std::memory_order_relaxed) == kConnecting);
         setState(kConnected);
+        channel_->enableRdhup();
         channel_->enableRead();
+        channel_->enableEt();
 
         connectionCallback_(shared_from_this());
 }

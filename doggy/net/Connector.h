@@ -56,8 +56,8 @@ namespace doggy
                         void resetChannel();
 
                 private:
-                        static const std::chrono::milliseconds kMaxRetryDelayMs;
-                        static const std::chrono::milliseconds kInitRetryDelayMs;
+                        static constexpr std::chrono::milliseconds kMaxRetryDelayMs = 30 * 1000ms;
+                        static constexpr std::chrono::milliseconds kInitRetryDelayMs = 500ms;
 
                         EventLoop *loop_;
                         TimerQueue timerQueue_;

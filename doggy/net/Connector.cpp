@@ -7,9 +7,6 @@
 using namespace doggy;
 using namespace doggy::net;
 
-static const std::chrono::milliseconds kMaxRetryDelayMs = 30 * 1000ms;
-static const std::chrono::milliseconds kInitRetryDelayMs = 500ms;
-
 Connector::Connector(EventLoop *loop, const InetAddress &serverAddr)
     : loop_(loop),
       timerQueue_(loop),

@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.18)
 
 project(doggy_t1)
@@ -30,3 +31,4 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 include_directories(${PROJECT_SOURCE_DIR})
 
 add_subdirectory(doggy/net)
+

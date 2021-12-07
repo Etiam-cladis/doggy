@@ -48,7 +48,7 @@ void Epoll::poll(int timesoutMs, ChannelList &channelList)
         }
         else
         {
-                if (saveError == EBADF || saveError == EFAULT || saveError == EINTR)
+                if (saveError != EINTR)
                 {
                         // LOG
                         abort();
