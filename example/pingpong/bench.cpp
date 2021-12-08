@@ -1,3 +1,6 @@
+// Benchmark inspired by libevent/test/bench.c
+// See also: http://libev.schmorp.de/bench.html
+
 #include "doggy/net/header.h"
 
 #include "doggy/net/Channel.h"
