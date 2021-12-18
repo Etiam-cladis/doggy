@@ -260,7 +260,7 @@ void TcpConnection::handleRead()
         while (true)
         {
                 n = inputBuffer_.readFdToThis(channel_->fd(), &saveError);
-                Error = errno;
+                saveError = errno;
                 if (n > 0)
                 {
                         continue;
@@ -272,7 +272,7 @@ void TcpConnection::handleRead()
                 }
                 else
                 {
-                        if (errno == EAGAIN || errno == EWOULDBLOCK)
+                        if (saveError == EAGAIN || saveError == EWOULDBLOCK)
                         {
                                 messageCallback_(shared_from_this(), inputBuffer_);
                                 break;
