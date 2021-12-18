@@ -3,7 +3,7 @@ aux_source_directory(. net_SRCS)
 
 add_library(doggy SHARED ${net_SRCS})
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
-SET_TARGET_PROPERTIES(doggy  PROPERTIES  VERSION 0.0.2  SOVERSION 0)
+SET_TARGET_PROPERTIES(doggy  PROPERTIES  VERSION 0.0.3  SOVERSION 0)
 target_link_libraries(doggy pthread)
 
 add_library(doggy_static STATIC ${net_SRCS})

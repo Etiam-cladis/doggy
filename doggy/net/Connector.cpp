@@ -118,7 +118,6 @@ void Connector::connecting(int sockFd)
         channel_->setErrorCallback([this]()
                                    { this->handleError(); });
         channel_->enableWrite();
-        channel_->enableEt();
 }
 
 int Connector::removeAndResetChannel()
@@ -127,8 +126,8 @@ int Connector::removeAndResetChannel()
         channel_->remove();
         int sockFd = channel_->fd();
 
-        loop_->runInLoop([this]()
-                         { this->resetChannel(); });
+        loop_->queueInLoop([this]()
+                           { this->resetChannel(); });
 
         return sockFd;
 }

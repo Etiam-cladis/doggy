@@ -74,21 +74,6 @@ void Epoll::fillActiveChannels(int numEvents, ChannelList &activeChannelList) co
         }
 }
 
-void Epoll::updateChannelOther(Channel *channel)
-{
-        assertInLoopThread();
-        epoll_event event{0};
-        event.events = channel->events();
-        event.data.ptr = channel;
-        int fd = channel->fd();
-
-        if (::epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &event) < 0)
-        {
-                // LOG SYSFATAL TODO
-                abort();
-        }
-}
-
 void Epoll::updateChannelRW(Channel *channel)
 {
         assertInLoopThread();
@@ -156,8 +141,11 @@ void Epoll::update(int operation, Channel *channel)
 
         if (::epoll_ctl(epollFd_, operation, fd, &event) < 0)
         {
-                // LOG SYSFATAL TODO
-                abort();
+                if (operation != EPOLL_CTL_DEL)
+                {
+                        // LOG SYSFATAL TODO
+                        abort();
+                }
         }
 }
 

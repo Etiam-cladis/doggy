@@ -61,35 +61,29 @@ namespace doggy
                         void enableRdhup()
                         {
                                 event_ |= kRdhup_;
-                                updateOther();
                         }
 
                         void disableRdhup()
                         {
                                 event_ &= ~kRdhup_;
-                                updateOther();
                         }
 
                         void enableOneshot()
                         {
                                 event_ |= kOneshot_;
-                                updateOther();
                         }
 
                         void disableOneshot()
                         {
                                 event_ &= ~kOneshot_;
-                                updateOther();
                         }
                         void enableEt()
                         {
                                 event_ |= kEt_;
-                                updateOther();
                         }
                         void disableEt()
                         {
                                 event_ &= ~kEt_;
-                                updateOther();
                         }
                         void disableAll()
                         {
@@ -124,13 +118,14 @@ namespace doggy
                         void setErrorCallback(EventCallback &&cb) { errorCallback_ = std::move(cb); }
 
                 public:
+                        void tie(const std::shared_ptr<void> &obj);
                         void remove();
                         void handleEvent();
                         EventLoop *ownerLoop() const { return loop_; }
 
                 private:
+                        void handleEventWithGuard();
                         void updateRW();
-                        void updateOther();
 
                         static constexpr int kReadEvent_ = EPOLLIN | EPOLLPRI;
                         static constexpr int kWriteEvent_ = EPOLLOUT;
@@ -145,6 +140,8 @@ namespace doggy
                         int rEvent_; // for epoll
                         int index_;  // for epoll
 
+                        std::weak_ptr<void> tie_;
+                        bool tied_;
                         bool eventHading_;
                         bool addedToLoop_;
 

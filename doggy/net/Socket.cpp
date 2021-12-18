@@ -31,7 +31,7 @@ void Socket::listen()
 int Socket::accept(InetAddress &peeraddr)
 {
         sockaddr sa{0};
-        socklen_t size = sizeof(sa);
+        socklen_t size = sizeof(sockaddr_in6);
         int connFd = ::accept4(sockFd_, &sa, &size, SOCK_CLOEXEC | SOCK_NONBLOCK);
         if (connFd < 0)
         {
@@ -78,9 +78,8 @@ int Socket::accept(InetAddress &peeraddr)
                 break;
         }
         default:
-                abort();
+                break;
         }
-
         return connFd;
 }
 

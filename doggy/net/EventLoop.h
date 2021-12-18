@@ -49,7 +49,6 @@ namespace doggy
                         void cancel(TimerId timerId);
 
                         void updateChannelRW(Channel *channel);
-                        void updateChannelOther(Channel *channel);
                         void removeChannel(Channel *channel);
 
                         void assertInLoopThread()

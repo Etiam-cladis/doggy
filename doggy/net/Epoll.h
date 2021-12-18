@@ -27,7 +27,6 @@ namespace doggy
 
                 public:
                         void poll(int timesoutMs, ChannelList &channelList);
-                        void updateChannelOther(Channel *channel);
                         void updateChannelRW(Channel *channel);
                         void removeChannel(Channel *channel);
 

@@ -17,16 +17,6 @@ TcpConnection::TcpConnection(EventLoop *loop, int sockFd, const InetAddress &loc
       socket_(std::make_unique<Socket>(sockFd)),
       channel_(std::make_unique<Channel>(loop, sockFd))
 {
-        auto p = shared_from_this();
-        channel_->setReadCallback([p]()
-                                  { p->handleRead(); });
-        channel_->setWriteCallback([p]()
-                                   { p->handleWrite(); });
-        channel_->setCloseCallback([p]()
-                                   { p->handleClose(); });
-        channel_->setErrorCallback([p]()
-                                   { p->handleError(); });
-
         socket_->setKeepAlive(true);
 }
 
@@ -106,8 +96,16 @@ void TcpConnection::sendInLoop(std::string &&message)
 void TcpConnection::sendInLoop(const void *buf, size_t len)
 {
         loop_->assertInLoopThread();
+
+        if (!channel_->isWriting())
+        {
+                channel_->enableWrite();
+        }
+
         ssize_t nwrote = 0;
 
+        // TODO
+        //      highWaterMark
         if (channel_->isWriting() && outputBuffer_.readableBytes() == 0)
         {
                 nwrote = ::send(channel_->fd(), buf, len, MSG_NOSIGNAL);
@@ -131,10 +129,6 @@ void TcpConnection::sendInLoop(const void *buf, size_t len)
         if (static_cast<size_t>(nwrote) < len)
         {
                 outputBuffer_.appen(static_cast<const char *>(buf) + nwrote, len - nwrote);
-                if (!channel_->isWriting())
-                {
-                        channel_->enableWrite();
-                }
         }
 }
 
@@ -226,9 +220,20 @@ void TcpConnection::connectEstablished()
         loop_->assertInLoopThread();
         assert(tcpConnectionState_.load(std::memory_order_relaxed) == kConnecting);
         setState(kConnected);
+        auto p = shared_from_this();
+        channel_->setReadCallback([p]()
+                                  { p->handleRead(); });
+        channel_->setWriteCallback([p]()
+                                   { p->handleWrite(); });
+        channel_->setCloseCallback([p]()
+                                   { p->handleClose(); });
+        channel_->setErrorCallback([p]()
+                                   { p->handleError(); });
+
+        channel_->tie(shared_from_this());
+        channel_->enableEt();
         channel_->enableRdhup();
         channel_->enableRead();
-        channel_->enableEt();
 
         connectionCallback_(shared_from_this());
 }
@@ -260,17 +265,24 @@ void TcpConnection::handleRead()
                 {
                         continue;
                 }
-                else if (n == 0 && Error == EAGAIN)
+                else if (n == 0)
                 {
-                        messageCallback_(shared_from_this(), inputBuffer_);
                         handleClose();
                         break;
                 }
                 else
                 {
-                        errno = saveError;
-                        handleError();
-                        break;
+                        if (errno == EAGAIN || errno == EWOULDBLOCK)
+                        {
+                                messageCallback_(shared_from_this(), inputBuffer_);
+                                break;
+                        }
+                        else
+                        {
+                                errno = saveError;
+                                handleError();
+                                break;
+                        }
                 }
         }
 }

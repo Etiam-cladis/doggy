@@ -83,17 +83,17 @@ TimerQueue::~TimerQueue()
 
 TimerId TimerQueue::addTimer(const TimerCallback &cb, Timestamp when, std::chrono::microseconds interval)
 {
-        if (!timerFdChannel_.isReading())
-        {
-                timerFdChannel_.enableRead();
-        }
-
 #ifndef USE_LT_TRIGGER
         if (!timerFdChannel_.isEt())
         {
                 timerFdChannel_.enableEt();
         }
 #endif
+
+        if (!timerFdChannel_.isReading())
+        {
+                timerFdChannel_.enableRead();
+        }
 
         std::shared_ptr<Timer> timer = std::make_shared<Timer>(cb, when, interval);
         auto p = timer.get();
@@ -103,17 +103,17 @@ TimerId TimerQueue::addTimer(const TimerCallback &cb, Timestamp when, std::chron
 }
 TimerId TimerQueue::addTimer(TimerCallback &&cb, Timestamp when, std::chrono::microseconds interval)
 {
-        if (!timerFdChannel_.isReading())
-        {
-                timerFdChannel_.enableRead();
-        }
-
 #ifndef USELTTRIGGER
         if (!timerFdChannel_.isEt())
         {
                 timerFdChannel_.enableEt();
         }
 #endif
+
+        if (!timerFdChannel_.isReading())
+        {
+                timerFdChannel_.enableRead();
+        }
 
         std::shared_ptr<Timer> timer = std::make_shared<Timer>(std::move(cb), when, interval);
         auto p = timer.get();

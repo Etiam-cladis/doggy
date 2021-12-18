@@ -49,11 +49,8 @@ TcpClient::~TcpClient()
 
 void TcpClient::connect()
 {
-        if (connect_.load(std::memory_order_relaxed) == false)
-        {
-                connect_.store(true, std::memory_order_relaxed);
-                connector_->start();
-        }
+        connect_.store(true, std::memory_order_relaxed);
+        connector_->start();
 }
 
 void TcpClient::disconnect()

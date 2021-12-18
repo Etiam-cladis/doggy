@@ -29,7 +29,8 @@
                 "stop_token": "cpp",
                 "memory": "cpp",
                 "utility": "cpp",
-                "cwchar": "cpp"
+                "cwchar": "cpp",
+                "climits": "cpp"
         },
         "C_Cpp.errorSquiggles": "Disabled"
 }
